@@ -1,0 +1,2 @@
+add_executable(bios_ut_example example.cpp)
+target_link_libraries(bios_ut_example PRIVATE bios_ut)
