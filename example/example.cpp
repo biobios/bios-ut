@@ -24,5 +24,5 @@ int main() {
     "main defined test"_test = [] {
         bios::ut::expect(1_i == 1);
     };
-    return 0;
+    return bios::ut::runner::run();
 }

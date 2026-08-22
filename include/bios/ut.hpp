@@ -68,6 +68,11 @@ public:
      * @brief テストケースを登録する
      */
     static void register_test_case(const char* case_name, test_case_func func);
+    
+    /**
+     * @brief 実行してrunnerを終了する
+     */
+    static int run();
 
 private:
     static runner& instance() {
@@ -77,9 +82,6 @@ private:
 
     runner();
     ~runner();
-
-    // @brief 最終結果を出力する
-    void print_result();
 
     class impl_t;
     helper::unique_ptr<impl_t> impl;

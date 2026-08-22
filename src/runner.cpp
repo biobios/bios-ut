@@ -42,6 +42,32 @@ struct runner::impl_t {
     int current_suite_to_register_index = -1;
     
     /**
+     * @brief ステータスコードを返す
+     */
+    int status_code() const {
+        size_t total_cases = 0;
+        size_t total_expect_fail = 0;
+        size_t total_fatal_fail = 0;
+        for (auto& s : suites) {
+            for (auto& c : s.cases) {
+                total_cases++;
+                if (c.fatal_fail) {
+                    total_fatal_fail++;
+                } else if (c.expect_fail_count > 0) {
+                    total_expect_fail++;
+                }
+            }
+        }
+        if (total_fatal_fail > 0) {
+            return 2;
+        } else if (total_expect_fail > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    
+    /**
      * @brief 現在実行中のテストスイートを取得する
      */
     test_suite& current_suite() {
@@ -65,12 +91,17 @@ struct runner::impl_t {
     /**
      * @brief すべての未実行のテストケースを実行する
      */
-    void run() {
+    int run() {
+        if (done) {
+            return status_code();
+        }
         for (int i = 0; i < suites.size(); ++i) {
             current_suite_index = i;
             run(suites[i]);
         }
+        print_result();
         done = true;
+        return status_code();
     }
 
     /**
@@ -100,10 +131,7 @@ struct runner::impl_t {
 
     impl_t() = default;
     ~impl_t() {
-        if (!done) {
-            run();
-        }
-        print_result();
+        run();
     }
 
     /**
@@ -216,6 +244,12 @@ void runner::register_test_case(const char* case_name, test_case_func func) {
     auto& inst = instance();
     std::string name(case_name);
     inst.impl->register_test_case(name, func);
+}
+
+int runner::run() {
+    auto& inst = instance();
+    int status = inst.impl->run();
+    return status;
 }
 
 }

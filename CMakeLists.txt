@@ -16,6 +16,11 @@ target_include_directories(bios_ut PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOUR
 # Provide an ALIAS target (standard practice for modern CMake)
 add_library(bios::ut ALIAS bios_ut)
 
+# Main target
+add_library(bios_ut_main STATIC src/default_main.cpp)
+target_link_libraries(bios_ut_main PUBLIC bios_ut)
+add_library(bios::ut_main ALIAS bios_ut_main)
+
 # Example target: Only build if this is the main project (not when added via add_subdirectory)
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     add_subdirectory(example)
