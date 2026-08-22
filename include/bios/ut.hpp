@@ -33,7 +33,15 @@ public:
         return ptr;
     }
 };
-
+template <decltype(sizeof(char)) N>
+struct const_char_array {
+    char value[N];
+    constexpr const_char_array(const char(&arr)[N]) {
+        for (decltype(N) i = 0; i < N; ++i) {
+            value[i] = arr[i];
+        }
+    }
+};
 }
 
 class runner {
@@ -273,11 +281,11 @@ fatal_result<T> fatal(T&& value) {
 
 constexpr char default_suite_name[] = "default";
 
-template <const char* suite_name = default_suite_name>
+template <helper::const_char_array suite_name = default_suite_name>
 class suite {
 public:
     suite(void(*register_func)()) {
-        runner::set_suite_to_register(suite_name);
+        runner::set_suite_to_register(suite_name.value);
         register_func();
         runner::set_suite_to_register(default_suite_name);
     }

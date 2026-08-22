@@ -14,8 +14,15 @@ suite test_basic{[](){
     };
 }};
 
+suite<"named suite"> test_named_suite{[](){
+    "Named suite test"_test = [] {
+        bios::ut::expect(3_i == 3);
+    };
+}};
+
 int main() {
-    // Tests are automatically registered and will run upon static destruction
-    // of the runner instance. Returning 0 here lets the framework do its job.
+    "main defined test"_test = [] {
+        bios::ut::expect(1_i == 1);
+    };
     return 0;
 }
